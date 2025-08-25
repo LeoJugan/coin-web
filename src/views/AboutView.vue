@@ -22,16 +22,6 @@ const headers = [
 
 ];
 
-
-
-function formatCurrency(num: number): string {
-  if (num === null || num === undefined || num === '' || isNaN(Number(num))) return '';
-  const fixed = Number(num).toFixed(3);
-  const formatted = fixed.replace(/\B(?=(\d{3})+(?!\d))/g, ',').replace(/(\.\d{3})\d*$/, '$1');
-  currencyData.value.rate = formatted; // 同步更新 rate 欄位
-  return formatted;
-}
-const formattedRateFloat = computed(() => formatCurrency(currencyData.value.rateFloat));
 const getCurrency = async () => {
   appApiData.getByPath('currenciesHist').then((result) => {
     items.value = result;

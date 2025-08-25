@@ -37,7 +37,36 @@ const comfirmItemRemove = {
   snackbarText: "資料已刪除",
   cancelBtnFlag: true
 };
-const currencyData = ref({});
+interface CurrencyData {
+  id: string
+  code: string
+  name: string
+  symbol: string
+  rate: string
+  rateFloat: number | null
+  description: string
+};
+
+const defaultCurrencyData = ref<CurrencyData>({
+  id: '',
+  code: '',
+  name: '',
+  symbol: '',
+  rate: '',
+  rateFloat: null,
+  description: '',
+});
+
+const currencyData = ref<CurrencyData>({
+  id: '',
+  code: '',
+  name: '',
+  symbol: '',
+  rate: '',
+  rateFloat: null,
+  description: '',
+});
+
 const dialogUpdate = ref(false);
 
 // const updateCurrency = async (id, data) => {
@@ -53,11 +82,10 @@ const dialogUpdate = ref(false);
 //   }
 // };
 
-function formatCurrency(num: number): string {
+function formatCurrency(num: number | null): string {
   if (num === null || num === undefined || num === '' || isNaN(Number(num))) return '';
   const fixed = Number(num).toFixed(3);
   const formatted = fixed.replace(/\B(?=(\d{3})+(?!\d))/g, ',').replace(/(\.\d{3})\d*$/, '$1');
-  currencyData.value.rate = formatted; // 同步更新 rate 欄位
   return formatted;
 }
 const formattedRateFloat = computed(() => formatCurrency(currencyData.value.rateFloat));
@@ -75,6 +103,7 @@ const handleInit = async () => {
 
 
 const handleUpdate = () => {
+  currencyData.value.rate = formatCurrency(currencyData.value.rateFloat);
   if (!currencyData.value.id) {
     // 新增
     appApiData.postByBody('currencies', currencyData.value).then((result) => {
@@ -91,8 +120,8 @@ const handleUpdate = () => {
 }
 
 
-const handledelete = (item) => {
-  console.log(currencyData.value);
+const handledelete = (item: any) => {
+  // console.log(currencyData.value);
   // axios.delete(`/devTest/api/currencies/${currencyData.value.id}`, {
   //   headers: { "Content-Type": "application/json" }
   // })
@@ -112,7 +141,7 @@ const handledelete = (item) => {
   console.log("刪除成功");
 };
 
-const checkCodeDuplicated = async (code) => {
+const checkCodeDuplicated = async (code: string) => {
   // console.log(code);
   if (!code) return true
   const result = await appApiData.getByPath('currenciesFindByCode', [code], false, false);
@@ -124,51 +153,59 @@ const checkCodeDuplicated = async (code) => {
 };
 
 
-const rulesUtil = (array) => {
-  const rules = {
+const rulesUtil = (array: string[]): any[] => {
+  const rules: { [key: string]: any[] } = {
     requiredRule: [
-      v => !!v || '此欄位必填',
+      (v: any) => !!v || '此欄位必填',
     ],
     //容許0 目前數字欄位通則 
     requiredRuleInt: [
-      v => v != null && v.toString().length <= 100 || '最大長度是100',
-      (v) => v !== null || "此欄位必填",
-      (v) => !isNaN(v) || "此欄位必須是數字",
-      // (v) => v >= 0 || "此欄位必須大於0",
-      v => v === undefined || v === null || v === '' || (/^(0|[1-9][0-9]*)$/.test(v)) || '請填寫正整數或 0'
+      (v: any) => v != null && v.toString().length <= 100 || '最大長度是100',
+      (v: any) => v !== null || "此欄位必填",
+      (v: any) => !isNaN(v) || "此欄位必須是數字",
+      // (v: any) => v >= 0 || "此欄位必須大於0",
+      (v: any) => v === undefined || v === null || v === '' || (/^(0|[1-9][0-9]*)$/.test(v)) || '請填寫正整數或 0'
     ],
     requiredRuleDecimal: [
-      v => v !== null && v !== undefined && v !== '' || "此欄位必填",
-      v => v != null && v.toString().length <= 100 || '最大長度是100',
-      v => !isNaN(v) || "此欄位必須是數字",
-      v => {
+      (v: any) => v !== null && v !== undefined && v !== '' || "此欄位必填",
+      (v: any) => v != null && v.toString().length <= 100 || '最大長度是100',
+      (v: any) => !isNaN(v) || "此欄位必須是數字",
+      (v: any) => {
         const val = parseFloat(v);
         return v === '' || (!isNaN(val) && val >= 0) || '請填寫 0 或正數';
       }
     ],
     //positiveInteger positiveIntegerOrZero 目前沒用
-    positiveInteger: [v => v === undefined || v === null || v === '' || /^[0-9]*[1-9][0-9]*$/.test(v) || '請填寫正整數'],
-    positiveIntegerOrZero: [v => v === undefined || v === null || v === '' || (/^(0|[1-9][0-9]*)$/.test(v)) || '請填寫正整數或 0'],
-    requiredRuleIntSelect: [v => /^(0|[1-9][0-9]*)$/.test(v) || '此欄位必填'],
+    positiveInteger: [(v: any) => v === undefined || v === null || v === '' || /^[0-9]*[1-9][0-9]*$/.test(v) || '請填寫正整數'],
+    positiveIntegerOrZero: [(v: any) => v === undefined || v === null || v === '' || (/^(0|[1-9][0-9]*)$/.test(v)) || '請填寫正整數或 0'],
+    requiredRuleIntSelect: [(v: any) => /^(0|[1-9][0-9]*)$/.test(v) || '此欄位必填'],
     onlyEnAndNumRule: [
-      v => !v || /^[A-Za-z0-9]+$/.test(v) || '只能輸入英文字母與數字',
+      (v: any) => !v || /^[A-Za-z0-9]+$/.test(v) || '只能輸入英文字母與數字',
     ],
-    emailRules: [(v) =>
+    emailRules: [(v: any) =>
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
         v
       ) || "e-Mail格式有誤!",],
-    maxInt10W: [v => v == null || (v != null && v <= 100000) || '最大值是100000'],
-    maxInt2B: [v => v == null || (v != null && v <= 2000000000) || '最大值是2000000000'],
+    maxInt10W: [(v: any) => v == null || (v != null && v <= 100000) || '最大值是100000'],
+    maxInt2B: [(v: any) => v == null || (v != null && v <= 2000000000) || '最大值是2000000000'],
 
   }
-  const result = [];
+  const result: any[] = [];
   //如果是maxlength20 就是限制不能超過20字
+  // array.forEach(rule => {
+  //   if (rules[rule]) {
+  //     result.push(...rules[rule]);
+  //   } else if (rule.indexOf('maxlength') != -1) {
+  //     let maxlength = rule.replace('maxlength', '');
+  //     result.push((v: any) => v == null || (v != null && v.length <= parseInt(maxlength)) || '最大長度是' + maxlength);
+  //   }
+  // });
   array.forEach(rule => {
-    if (rules[rule]) {
+    if (Array.isArray(rules[rule])) {
       result.push(...rules[rule]);
-    } else if (rule.indexOf('maxlength') != -1) {
+    } else if (rule.indexOf('maxlength') !== -1) {
       let maxlength = rule.replace('maxlength', '');
-      result.push(v => v == null || (v != null && v.length <= parseInt(maxlength)) || '最大長度是' + maxlength);
+      result.push((v: any) => v == null || (v != null && v.length <= parseInt(maxlength)) || '最大長度是' + maxlength);
     }
   });
 
@@ -184,7 +221,8 @@ getCurrency()
 
 <template>
   <main>
-    <v-btn color="blue-darken-1" variant="elevated" @click="currencyData = {}; dialogUpdate = true;">
+    <v-btn color="blue-darken-1" variant="elevated"
+      @click="currencyData = JSON.parse(JSON.stringify(defaultCurrencyData)); dialogUpdate = true;">
       新增幣別
     </v-btn>
     <v-btn variant="elevated" class="ml-2" @click="appApiData.updateConfirm(true, comfirmItemUpdate, handleInit)">

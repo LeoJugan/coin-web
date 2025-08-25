@@ -7,6 +7,7 @@ export const useAppApiDataStore = defineStore({
         apiServerUrl: process.env.NODE_ENV === 'production'
             ? '/devTest/'
             : '/devTest/',
+        apiToken: null,
         //confirm
         confirmStatus: false,
         confirmItem: null,
@@ -40,16 +41,18 @@ export const useAppApiDataStore = defineStore({
             setTimeout(() => {
                 this.autoSaveStatus = val;
             }, timeout);
-
+            // console.log("updateAutoSaveStatus ", val, this.snackbarItem);
             if (!val && this.snackbarItem) {
                 this.updatesSnackbarStatus(true);
                 setTimeout(() => {
                     this.updatesSnackbarStatus(false);
-                }, this.snackbarItem && this.snackbarItem.timeout ? this.snackbarItem.timeout + 200 : 200);
+                }, 200);
             }
 
         },
         updatesSnackbarStatus(val) {
+            if (!val)
+                console.log("updatesSnackbarStatus ", val);
             this.snackbarStatus = val;
             if (!val)
                 this.snackbarItem = null;
@@ -93,6 +96,7 @@ export const useAppApiDataStore = defineStore({
                 })
                 .finally(() => {
                     setTimeout(() => {
+                        console.log("autoSaveStatusEnd ", autoSaveStatusEnd);
                         if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
                     }, timeout);
 
