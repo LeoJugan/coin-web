@@ -7,7 +7,7 @@ export const useAppApiDataStore = defineStore({
     id: "appApiData",
     state: () => ({
         apiServerUrl: process.env.NODE_ENV === 'production'
-            ? '/devTest/'
+            ? '/production/'
             : '/devTest/',
         apiToken: null,
         //confirm

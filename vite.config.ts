@@ -17,19 +17,15 @@ export default defineConfig({
   },
   server: {
     proxy: {
-
-      // '/api': 'https://nhri.hywebcloud20.com/',
+      "/production": {
+        target: "http://localhost:8080/coindesk-1.0.0/", //本機測試
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/production/, ""),
+      },
       "/devTest": {
         target: "http://localhost:8080/", //本機測試
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/devTest/, ""),
-        // },
-        // "/api": {
-        //   target: "https://nhri.hywebcloud20.com/", // 後端 API 進入點
-        //   changeOrigin: true,
-        //   // secure: false,
-        //   ws: true,
-        //   rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
 
