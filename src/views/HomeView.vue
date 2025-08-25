@@ -3,6 +3,7 @@ import { onMounted, computed, ref } from 'vue';
 import axios from "axios";
 import { useAppApiDataStore } from '@/stores/app-api-data'
 import moment from 'moment';
+import { C } from 'vitest/dist/chunks/environment.d.cL3nLXbE';
 const appApiData = useAppApiDataStore()
 
 
@@ -21,22 +22,40 @@ const headers = [
   { title: "動作", key: "action", width: '20%', sortable: false, removable: true }
 
 ];
-const comfirmItemUpdate = {
+
+interface ConfirmItem {
+  title: string;
+  content: string;
+  btnText: string;
+  color: string;
+  snackbarText: string;
+  cancelBtnFlag: boolean;
+}
+
+const comfirmItemUpdate = ref<ConfirmItem>({
   title: "更新確認",
   content: "是否確認更新此筆資料？",
   btnText: "確認更新",
   color: "blue-darken-1",
   snackbarText: "資料已更新",
   cancelBtnFlag: true
-};
-const comfirmItemRemove = {
+});
+const comfirmItemInit = ref<ConfirmItem>({
+  title: "更新確認",
+  content: "是否確認還原資料？",
+  btnText: "確認更新",
+  color: "blue-darken-1",
+  snackbarText: "資料已更新",
+  cancelBtnFlag: true
+});
+const comfirmItemRemove = ref<ConfirmItem>({
   title: "刪除確認",
   content: "是否確認刪除此筆資料？",
   btnText: "確認刪除",
   color: "red",
   snackbarText: "資料已刪除",
   cancelBtnFlag: true
-};
+});
 interface CurrencyData {
   id: string
   code: string
@@ -225,7 +244,7 @@ getCurrency()
       @click="currencyData = JSON.parse(JSON.stringify(defaultCurrencyData)); dialogUpdate = true;">
       新增幣別
     </v-btn>
-    <v-btn variant="elevated" class="ml-2" @click="appApiData.updateConfirm(true, comfirmItemUpdate, handleInit)">
+    <v-btn variant="elevated" class="ml-2" @click="appApiData.updateConfirm(true, comfirmItemInit, handleInit)">
       還原資料
     </v-btn>
     <v-data-table-server :items="items" :headers="headers" :items-length="items.length" item-value="id"

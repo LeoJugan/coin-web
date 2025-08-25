@@ -35,16 +35,9 @@ export default defineConfig({
 
   },
   build: {
+    outDir: 'dist',         // 這裡
+    emptyOutDir: true,      // 這裡
     chunkSizeWarningLimit: 2048,
-    // rollupOptions: {
-    //   output: {
-    //     manualChunks(id) {
-    //       if (id.includes('node_modules')) {
-    //         return id.toString().split('node_modules/')[1].split('/')[0].toString();
-    //       }
-    //     }
-    //   }
-    // }
     rollupOptions: {
       output: {
         manualChunks: {
