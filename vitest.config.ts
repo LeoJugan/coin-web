@@ -17,7 +17,7 @@ const testViteConfig = defineViteConfig({
   },
   css: {
     modules: {
-      classNameStrategy: 'non-scoped'
+      localsConvention: 'camelCase'
     }
   },
   // 處理 CSS 檔案

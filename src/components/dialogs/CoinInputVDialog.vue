@@ -24,7 +24,8 @@
               <!-- 原始 Vuetify 表單 -->
               <v-row class="tableInfo">
                 <InputField
-                  v-model="currencyData.code"
+                  :model-value="currencyData.code"
+                  @update:model-value="(value: string | number) => emitUpdateCurrencyData({ ...currencyData, code: String(value) })"
                   label="代碼"
                   variant="outlined"
                   density="compact"
@@ -37,7 +38,8 @@
                 />
 
                 <InputField
-                  v-model="currencyData.name"
+                  :model-value="currencyData.name"
+                  @update:model-value="(value: string | number) => emitUpdateCurrencyData({ ...currencyData, name: String(value) })"
                   label="中文名稱"
                   variant="outlined"
                   density="compact"
@@ -48,7 +50,8 @@
                 />
 
                 <InputField
-                  v-model="currencyData.symbol"
+                  :model-value="currencyData.symbol"
+                  @update:model-value="(value: string | number) => emitUpdateCurrencyData({ ...currencyData, symbol: String(value) })"
                   label="符號"
                   variant="outlined"
                   density="compact"
@@ -73,7 +76,8 @@
                 <v-col lg="6" cols="8" class="d-flex align-center">{{ formattedRateFloat }}</v-col>
 
                 <InputField
-                  v-model="currencyData.description"
+                  :model-value="currencyData.description"
+                  @update:model-value="(value: string | number) => emitUpdateCurrencyData({ ...currencyData, description: String(value) })"
                   label="幣別描述"
                   variant="outlined"
                   density="compact"
@@ -134,6 +138,11 @@ const emit = defineEmits<{
   close: []
 }>()
 
+// 類型安全的 emit 函數
+const emitUpdateCurrencyData = (value: CurrencyData) => {
+  emit('update:currencyData', value)
+}
+
 // 計算屬性
 const dialogVisible = computed({
   get: () => props.modelValue,
@@ -144,7 +153,7 @@ const rateFloatValue = computed({
   get: () => props.currencyData.rateFloat ?? '',
   set: (value: string | number) => {
     const numValue = typeof value === 'string' ? parseFloat(value) : value
-    props.currencyData.rateFloat = isNaN(numValue) ? null : numValue
+    emitUpdateCurrencyData({ ...props.currencyData, rateFloat: isNaN(numValue) ? null : numValue })
   }
 })
 
@@ -163,9 +172,6 @@ const handleClose = () => {
   emit('close')
 }
 
-const handleSave = () => {
-  emit('save', props.currencyData)
-}
 
 const handleSaveWithConfirm = () => {
   // 根據是否有 ID 來決定使用哪個確認項目

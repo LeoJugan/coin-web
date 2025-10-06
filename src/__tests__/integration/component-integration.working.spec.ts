@@ -71,7 +71,7 @@ describe('Component Integration Working Tests', () => {
       await wrapper.vm.$nextTick()
       
       expect(mockGetByPath).toHaveBeenCalledWith('currencies')
-      expect(wrapper.vm.items).toEqual([])
+      expect((wrapper.vm as any).items).toEqual([])
     })
 
     it('should handle store state changes', async () => {
@@ -82,7 +82,7 @@ describe('Component Integration Working Tests', () => {
       })
 
       // Simulate store state change
-      wrapper.vm.items = []
+      ;(wrapper.vm as any).items = []
       await wrapper.vm.$nextTick()
 
       const dataTable = wrapper.findComponent({ name: 'VDataTableServer' })
@@ -101,10 +101,10 @@ describe('Component Integration Working Tests', () => {
         }
       })
 
-      await wrapper.vm.getCurrency()
+      await (wrapper.vm as any).getCurrency()
       
       // 檢查錯誤處理
-      expect(wrapper.vm.items).toEqual([])
+      expect((wrapper.vm as any).items).toEqual([])
     })
 
     it('should handle component errors gracefully', () => {

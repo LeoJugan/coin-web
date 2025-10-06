@@ -17,7 +17,7 @@ const testViteConfig = defineViteConfig({
   },
   css: {
     modules: {
-      classNameStrategy: 'non-scoped'
+      localsConvention: 'camelCase'
     }
   },
   // 處理 CSS 檔案
@@ -32,7 +32,7 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/**'],
+      exclude: [...configDefaults.exclude, 'e2e/**', '**/confirmComp/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
       coverage: {
         provider: 'v8',
@@ -49,10 +49,10 @@ export default mergeConfig(
         ],
         thresholds: {
           global: {
-            branches: 60,
-            functions: 60,
-            lines: 60,
-            statements: 60
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80
           }
         }
       },
@@ -66,6 +66,3 @@ export default mergeConfig(
     },
   }),
 )
-
-
-

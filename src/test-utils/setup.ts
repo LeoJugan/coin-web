@@ -1,6 +1,8 @@
 import { vi } from 'vitest'
 import { setupTestConfig } from './index'
 
+// globalFunctions 類型已在 app-api-data.ts 中定義
+
 // 設定全域測試配置
 setupTestConfig()
 

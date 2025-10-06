@@ -64,13 +64,13 @@ describe('Component Integration Tests', () => {
       })
       
       // Test initial state (should be empty before API call)
-      expect(newWrapper.vm.items).toEqual([])
+      expect((newWrapper.vm as any).items).toEqual([])
       
       // Simulate API call
-      await newWrapper.vm.getCurrency()
+      await (newWrapper.vm as any).getCurrency()
       
       // Data should be loaded
-      expect(newWrapper.vm.items).toEqual(mockCurrencyData)
+      expect((newWrapper.vm as any).items).toEqual(mockCurrencyData)
     })
   })
 
@@ -87,7 +87,7 @@ describe('Component Integration Tests', () => {
       await wrapper.vm.$nextTick()
       
       expect(mockGetByPath).toHaveBeenCalledWith('currencies')
-      expect(wrapper.vm.items).toEqual(mockCurrencyData)
+      expect((wrapper.vm as any).items).toEqual(mockCurrencyData)
     })
 
     it('should handle store state changes', async () => {
@@ -101,17 +101,17 @@ describe('Component Integration Tests', () => {
       await wrapper.vm.$nextTick()
       
       // Verify initial data is loaded
-      expect(wrapper.vm.items).toEqual(mockCurrencyData)
-      
-      // Simulate store state change
-      wrapper.vm.items = []
-      await wrapper.vm.$nextTick()
+          expect((wrapper.vm as any).items).toEqual(mockCurrencyData)
+          
+          // Simulate store state change
+          ;(wrapper.vm as any).items = []
+          await wrapper.vm.$nextTick()
 
-      // Verify the change was applied
-      expect(wrapper.vm.items).toEqual([])
-      
-      const dataTable = wrapper.findComponent({ name: 'VDataTableServer' })
-      expect(dataTable.props('items')).toEqual([])
+          // Verify the change was applied
+          expect((wrapper.vm as any).items).toEqual([])
+          
+          const dataTable = wrapper.findComponent({ name: 'VDataTableServer' })
+          expect(dataTable.props('items')).toEqual([])
     })
   })
 
@@ -126,10 +126,10 @@ describe('Component Integration Tests', () => {
         }
       })
 
-      await wrapper.vm.getCurrency()
-      
-      // 檢查錯誤處理
-      expect(wrapper.vm.items).toEqual([])
+          await (wrapper.vm as any).getCurrency()
+          
+          // 檢查錯誤處理
+          expect((wrapper.vm as any).items).toEqual([])
     })
 
     it('should handle component errors gracefully', () => {

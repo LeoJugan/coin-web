@@ -205,7 +205,7 @@ const rulesUtil = (array: string[]): any[] => {
     if (Array.isArray(rules[rule])) {
       result.push(...rules[rule]);
     } else if (rule.indexOf('maxlength') !== -1) {
-      let maxlength = rule.replace('maxlength', '');
+      const maxlength = rule.replace('maxlength', '');
       result.push((v: any) => v == null || (v != null && v.length <= parseInt(maxlength)) || '最大長度是' + maxlength);
     }
   });

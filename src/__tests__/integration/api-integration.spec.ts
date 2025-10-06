@@ -6,10 +6,10 @@ import { mockApiResponse, mockApiCurrencyData } from '../../test-utils'
 
 // Mock axios
 vi.mock('axios')
-const mockedAxios = vi.mocked(axios)
+const mockedAxios = vi.mocked(axios) as any
 
 // Mock globalFunctions
-global.globalFunctions = {
+;(global as any).globalFunctions = {
   handErrorUtil: vi.fn()
 }
 

@@ -1,9 +1,8 @@
-import { defineConfig } from 'vitest/config'
-import { mergeConfig } from 'vitest/config'
+import { fileURLToPath } from 'node:url'
+import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import { defineConfig as defineViteConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
-import { fileURLToPath } from 'node:url'
 
 // 建立專門的 Vite 配置給測試使用
 const testViteConfig = defineViteConfig({
@@ -18,9 +17,10 @@ const testViteConfig = defineViteConfig({
   },
   css: {
     modules: {
-      classNameStrategy: 'non-scoped'
+      localsConvention: 'camelCase'
     }
   },
+  // 處理 CSS 檔案
   assetsInclude: ['**/*.css', '**/*.sass', '**/*.scss'],
   define: {
     'process.env': {}
@@ -32,11 +32,11 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
+      exclude: [...configDefaults.exclude, 'e2e/**', '**/confirmComp/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
       coverage: {
         provider: 'v8',
-        reporter: ['text', 'json', 'html', 'lcov'],
-        reportsDirectory: './coverage',
+        reporter: ['text', 'json', 'html'],
         exclude: [
           'coverage/**',
           'dist/**',
@@ -57,20 +57,12 @@ export default mergeConfig(
         }
       },
       setupFiles: ['./src/test-utils/setup.ts'],
+      // 處理 CSS 檔案
       server: {
         deps: {
           inline: ['vuetify']
         }
-      },
-      // 測試報告配置
-      reporter: ['verbose', 'json', 'html'],
-      outputFile: {
-        json: './test-results/results.json',
-        html: './test-results/index.html'
       }
     },
   }),
 )
-
-
-
