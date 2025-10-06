@@ -1,6 +1,39 @@
 import { defineStore } from "pinia";
 import axios from 'axios'
 
+// 型別定義
+interface SnackbarItem {
+    timeout?: number;
+    [key: string]: any;
+}
+
+interface QueryItem {
+    key: string;
+    value: string;
+}
+
+interface BodyItem {
+    body: any;
+}
+
+type QueryArrayItem = QueryItem | BodyItem;
+
+// 全域函數定義（如果不存在）
+declare global {
+    const globalFunctions: {
+        handErrorUtil: (message: string, data: any) => void;
+    };
+}
+
+// 如果 globalFunctions 不存在，創建一個預設實作
+if (typeof globalFunctions === 'undefined') {
+    (window as any).globalFunctions = {
+        handErrorUtil: (message: string, data: any) => {
+            console.error(message, data);
+        }
+    };
+}
+
 
 
 export const useAppApiDataStore = defineStore({
@@ -9,16 +42,16 @@ export const useAppApiDataStore = defineStore({
         apiServerUrl: process.env.NODE_ENV === 'production'
             ? '/production/'
             : '/devTest/',
-        apiToken: null,
+        apiToken: null as string | null,
         //confirm
         confirmStatus: false,
-        confirmItem: null,
-        confirmFoo: null,
+        confirmItem: null as any,
+        confirmFoo: null as any,
 
         //控制loading原件 loading關閉後 如果有設定snackbar 會自動開啟
         autoSaveStatus: false,
         //控制全域snackbar
-        snackbarItem: null,
+        snackbarItem: null as SnackbarItem | null,
         snackbarStatus: false,
     }),
     getters: {},
@@ -32,28 +65,26 @@ export const useAppApiDataStore = defineStore({
                 throw error;
             }
         },
-        updateConfirm(status, confirmItem = null, confirmFoo = null) {
+        updateConfirm(status: boolean, confirmItem: any = null, confirmFoo: any = null) {
             this.confirmStatus = status;
             if (status) {
                 this.confirmItem = confirmItem; this.confirmFoo = confirmFoo;
+            } else {
+                this.confirmItem = null; this.confirmFoo = null;
             }
         },
-        updateAutoSaveStatus(val, timeout = 0) {
+        updateAutoSaveStatus(val: boolean, timeout: number = 0) {
             // console.log("updateAutoSaveStatus ", val, timeout);
             setTimeout(() => {
                 this.autoSaveStatus = val;
             }, timeout);
             // console.log("updateAutoSaveStatus ", val, this.snackbarItem);
             if (!val && this.snackbarItem) {
-
                 this.updatesSnackbarStatus(true);
-                setTimeout(() => {
-                    this.updatesSnackbarStatus(false);
-                }, 200);
+                // 移除固定延遲，讓 updatesSnackbarStatus 自己處理延遲
             }
-
         },
-        updatesSnackbarStatus(val) {
+        updatesSnackbarStatus(val: boolean) {
             if (!val)
                 console.log("updatesSnackbarStatus ", val);
             this.snackbarStatus = val;
@@ -66,7 +97,7 @@ export const useAppApiDataStore = defineStore({
             //清除物件
         },
         //準備Snackbar 但是不會觸發
-        prepareSnackbar(snackbarItem) {
+        prepareSnackbar(snackbarItem: SnackbarItem) {
             if (!snackbarItem.timeout)
                 snackbarItem.timeout = 5000
             // console.log("snackbarItem ", snackbarItem);
@@ -74,7 +105,7 @@ export const useAppApiDataStore = defineStore({
         },
 
         //get query 路徑、欄位名稱、查詢值，開啟loading、延遲關閉loading
-        getByQuery(path, key, value, autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200) {
+        getByQuery(path: string, key: string, value: string, autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
             let vm = this;
             if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
             const fullpath = key ? this.apiServerUrl + 'api/' + path + '?' + key + '=' + value : this.apiServerUrl + 'api/' + path;
@@ -106,7 +137,7 @@ export const useAppApiDataStore = defineStore({
                 })
         },
         //get query 路徑key、複數{欄位名稱key,查詢值value}、、開啟loading、延遲關閉loading
-        getByQueryMulti(path, jsonArray = [], autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200) {
+        getByQueryMulti(path: string, jsonArray: QueryItem[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
             let vm = this;
             // console.log(jsonArray, "jsonArray ", jsonArray.every(item => item.hasOwnProperty('key')));
             // jsonArray.forEach(item => { console.log(item); })
@@ -145,7 +176,7 @@ export const useAppApiDataStore = defineStore({
                 })
         },
         //get path 路徑、欄位名稱、查詢值，開啟loading、延遲關閉loading
-        getByPath(path, valueArray = [], autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200) {
+        getByPath(path: string, valueArray: string[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
             let vm = this;
             // if (valueArray.length == 0) {
             //     globalFunctions.handErrorUtil("getByPath valueArray", valueArray);
@@ -181,7 +212,7 @@ export const useAppApiDataStore = defineStore({
                 })
         },
         //post body 路徑、object，開啟loading跟延遲關閉
-        postByBody(path, object, autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200, responseType) {
+        postByBody(path: string, object: any, autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200, responseType?: 'json' | 'text' | 'blob' | 'arraybuffer' | 'document') {
             let vm = this;
             // console.log("responseType ", responseType);
             if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
@@ -217,16 +248,17 @@ export const useAppApiDataStore = defineStore({
         //post query 路徑key、複數{欄位名稱key,查詢值value}、、開啟loading、延遲關閉loading
         //post 同時支援query跟body兩種方式
         //[ {key:'a1',value:'a2'},{key:'b1',value:'b2'},{body:{...}} ]
-        postByQueryMulti(path, jsonArray = [], autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200) {
+        postByQueryMulti(path: string, jsonArray: QueryArrayItem[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
             let vm = this;
             if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
-            if (jsonArray.length == 0 && !jsonArray.every(item => item.hasOwnProperty('key') && item.hasOwnProperty('value'))) {
+            if (jsonArray.length == 0 && !jsonArray.every(item => 'key' in item && 'value' in item)) {
                 globalFunctions.handErrorUtil("postByQueryMulti jsonArray", jsonArray);
                 return;
             }
 
-            const queryString = jsonArray.filter(item => item.hasOwnProperty('key')).map(item => `${item.key}=${item.value}`).join('&');
-            const body = jsonArray.find(item => item.hasOwnProperty('body')) ? jsonArray.find(item => item.hasOwnProperty('body')).body : {}
+            const queryString = jsonArray.filter(item => 'key' in item).map(item => `${(item as QueryItem).key}=${(item as QueryItem).value}`).join('&');
+            const bodyItem = jsonArray.find(item => 'body' in item);
+            const body = bodyItem ? (bodyItem as BodyItem).body : {}
             const fullpath = this.apiServerUrl + 'api/' + path + '?' + queryString;
             return axios
                 .post(
@@ -255,7 +287,7 @@ export const useAppApiDataStore = defineStore({
                 })
         },
         //put body 路徑、object，開啟loading跟延遲關閉
-        putByBody(path, object, autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200) {
+        putByBody(path: string, object: any, autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
             let vm = this;
             if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
             return axios
@@ -287,16 +319,17 @@ export const useAppApiDataStore = defineStore({
         //put query 路徑key、複數{欄位名稱key,查詢值value}、、開啟loading、延遲關閉loading
         //put 同時支援query跟body兩種方式
         //[ {key:'a1',value:'a2'},{key:'b1',value:'b2'},{body:{...}} ]
-        putByQueryMulti(path, jsonArray = [], autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200) {
+        putByQueryMulti(path: string, jsonArray: QueryArrayItem[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
             let vm = this;
             if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
-            if (jsonArray.length == 0 && !jsonArray.every(item => item.hasOwnProperty('key') && item.hasOwnProperty('value'))) {
+            if (jsonArray.length == 0 && !jsonArray.every(item => 'key' in item && 'value' in item)) {
                 globalFunctions.handErrorUtil("putByQueryMulti jsonArray", jsonArray);
                 return;
             }
 
-            const queryString = jsonArray.filter(item => item.hasOwnProperty('key')).map(item => `${item.key}=${item.value}`).join('&');
-            const body = jsonArray.find(item => item.hasOwnProperty('body')) ? jsonArray.find(item => item.hasOwnProperty('body')).body : {}
+            const queryString = jsonArray.filter(item => 'key' in item).map(item => `${(item as QueryItem).key}=${(item as QueryItem).value}`).join('&');
+            const bodyItem = jsonArray.find(item => 'body' in item);
+            const body = bodyItem ? (bodyItem as BodyItem).body : {}
             const fullpath = this.apiServerUrl + 'api/' + path + '?' + queryString;
             return axios
                 .put(
@@ -327,7 +360,7 @@ export const useAppApiDataStore = defineStore({
         //put body 路徑、object，開啟loading跟延遲關閉
         //query同時支援query跟body兩種方式 字串 => path/uuid JSON path?key=value
         //[ {key:'a1',value:'a2'},{key:'b1',value:'b2'}]
-        deleteByQuery(path, query, autoSaveStatusStart = true, autoSaveStatusEnd = true, timeout = 200) {
+        deleteByQuery(path: string, query: string | QueryItem | QueryItem[], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
             let vm = this;
             // const fullpath = typeof query === 'string' ? this.apiServerUrl + 'api/' + path + '/' + query : this.apiServerUrl + 'api/' + path + '?' + query.key + '=' + query.value;
             let fullpath = ''

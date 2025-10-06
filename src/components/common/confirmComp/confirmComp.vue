@@ -41,7 +41,6 @@ onMounted(() => {
 })
 
 // 取得全域 appApiData
-const { appContext } = getCurrentInstance()
 import { useAppApiDataStore } from '@/stores/app-api-data'
 
 const appApiData = useAppApiDataStore()
@@ -60,7 +59,7 @@ function handleConfirm() {
     timeout: !dialogItem.value.snackbarTimeout ? '2000' : dialogItem.value.snackbarTimeout,
   }
   if (props.confirmItem.noSnackbar)
-    appApiData.prepareSnackbar(null)
+    appApiData.prepareSnackbar({} as any)
   else
     appApiData.prepareSnackbar(snackbar)
 }

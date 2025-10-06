@@ -12,6 +12,7 @@
     "types": [
       "node",
       "jsdom"
-    ]
+    ],
+    "skipLibCheck": true
   }
 }

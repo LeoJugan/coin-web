@@ -15,6 +15,7 @@
     "moduleResolution": "Bundler",
     "types": [
       "node"
-    ]
+    ],
+    "skipLibCheck": true
   }
 }

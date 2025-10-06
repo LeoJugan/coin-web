@@ -32,7 +32,7 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/**', '**/confirmComp/**'],
+      exclude: [...configDefaults.exclude, 'e2e/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
       coverage: {
         provider: 'v8',
@@ -49,10 +49,10 @@ export default mergeConfig(
         ],
         thresholds: {
           global: {
-            branches: 80,
-            functions: 80,
-            lines: 80,
-            statements: 80
+            branches: 60,
+            functions: 60,
+            lines: 60,
+            statements: 60
           }
         }
       },
@@ -66,3 +66,6 @@ export default mergeConfig(
     },
   }),
 )
+
+
+

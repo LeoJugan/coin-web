@@ -3,14 +3,16 @@ import { onMounted, computed, ref } from 'vue';
 import axios from "axios";
 import { useAppApiDataStore } from '@/stores/app-api-data'
 import moment from 'moment';
-import { C } from 'vitest/dist/chunks/environment.d.cL3nLXbE';
+import type { CurrencyData } from '@/types/currency';
+import { confirmItemUpdate, confirmItemInit, confirmItemRemove } from '@/config/confirmItems';
+import { CoinInputVDialog } from '@/components/dialogs';
 const appApiData = useAppApiDataStore()
 
 
-// import TheWelcome from '../components/TheWelcome.vue'
-const title = ref('Welcome to the Home Page');
+
+const title = ref('Welcome to CoinList');
 const formValid = ref(false);
-const items = ref([])
+const items = ref<CurrencyData[]>([])
 const headers = [
   { title: '代碼', key: 'code' },
   { title: '中文', key: 'name' },
@@ -23,49 +25,9 @@ const headers = [
 
 ];
 
-interface ConfirmItem {
-  title: string;
-  content: string;
-  btnText: string;
-  color: string;
-  snackbarText: string;
-  cancelBtnFlag: boolean;
-}
 
-const comfirmItemUpdate = ref<ConfirmItem>({
-  title: "更新確認",
-  content: "是否確認更新此筆資料？",
-  btnText: "確認更新",
-  color: "blue-darken-1",
-  snackbarText: "資料已更新",
-  cancelBtnFlag: true
-});
-const comfirmItemInit = ref<ConfirmItem>({
-  title: "更新確認",
-  content: "是否確認還原資料？",
-  btnText: "確認更新",
-  color: "blue-darken-1",
-  snackbarText: "資料已更新",
-  cancelBtnFlag: true
-});
-const comfirmItemRemove = ref<ConfirmItem>({
-  title: "刪除確認",
-  content: "是否確認刪除此筆資料？",
-  btnText: "確認刪除",
-  color: "red",
-  snackbarText: "資料已刪除",
-  cancelBtnFlag: true
-});
-interface CurrencyData {
-  id: string
-  code: string
-  name: string
-  symbol: string
-  rate: string
-  rateFloat: number | null
-  description: string
-};
 
+//空白乾淨的
 const defaultCurrencyData = ref<CurrencyData>({
   id: '',
   code: '',
@@ -76,6 +38,7 @@ const defaultCurrencyData = ref<CurrencyData>({
   description: '',
 });
 
+//target物件
 const currencyData = ref<CurrencyData>({
   id: '',
   code: '',
@@ -102,16 +65,31 @@ const dialogUpdate = ref(false);
 // };
 
 function formatCurrency(num: number | null): string {
-  if (num === null || num === undefined || num === '' || isNaN(Number(num))) return '';
+  if (num === null || num === undefined) return '';
+  if (isNaN(Number(num))) return '';
   const fixed = Number(num).toFixed(3);
   const formatted = fixed.replace(/\B(?=(\d{3})+(?!\d))/g, ',').replace(/(\.\d{3})\d*$/, '$1');
   return formatted;
 }
 const formattedRateFloat = computed(() => formatCurrency(currencyData.value.rateFloat));
+
+// 為 InputField 創建計算屬性
+const rateFloatInput = computed({
+  get: () => currencyData.value.rateFloat || '',
+  set: (value: string | number) => {
+    currencyData.value.rateFloat = value ? Number(value) : null;
+  }
+});
+
+
 const getCurrency = async () => {
-  appApiData.getByPath('currencies').then((result) => {
+  try {
+    const result = await appApiData.getByPath('currencies');
     items.value = result;
-  });
+  } catch (error) {
+    console.error('Failed to fetch currencies:', error);
+    items.value = [];
+  }
 };
 
 const handleInit = async () => {
@@ -138,6 +116,10 @@ const handleUpdate = () => {
   }
 }
 
+const handleDialogClose = () => {
+  // 可以添加關閉時的清理邏輯
+}
+
 
 const handledelete = (item: any) => {
   // console.log(currencyData.value);
@@ -161,7 +143,7 @@ const handledelete = (item: any) => {
 };
 
 const checkCodeDuplicated = async (code: string) => {
-  // console.log(code);
+//   console.log(code);
   if (!code) return true
   const result = await appApiData.getByPath('currenciesFindByCode', [code], false, false);
   // 如果 result 有資料且 id 不同，代表重複
@@ -240,14 +222,14 @@ getCurrency()
 
 <template>
   <main>
-    <v-btn color="blue-darken-1" variant="elevated"
+    <v-btn color="green-darken-1" variant="elevated" class="ml-2"
       @click="currencyData = JSON.parse(JSON.stringify(defaultCurrencyData)); dialogUpdate = true;">
       新增幣別
     </v-btn>
-    <v-btn variant="elevated" class="ml-2" @click="appApiData.updateConfirm(true, comfirmItemInit, handleInit)">
+    <v-btn variant="elevated" class="ml-2" @click="appApiData.updateConfirm(true, confirmItemInit, handleInit)">
       還原資料
     </v-btn>
-    <v-data-table-server :items="items" :headers="headers" :items-length="items.length" item-value="id"
+    <v-data-table-server :items="items" :headers="headers" :items-length="items?.length || 0" item-value="id"
       no-data-text="無資料" loading-text="資料傳輸中" hide-default-footer>
       <template v-slot:[`item.modifyDate`]="{ item }">
         {{ moment(item.modifyDate).format('YYYY/MM/DD HH:mm:ss') }}
@@ -260,96 +242,26 @@ getCurrency()
           <template v-slot:activator="{ props }">
             <span class=" mr-3" v-bind="props"
               @click="currencyData = JSON.parse(JSON.stringify(item)); dialogUpdate = true;">
-              <Icon icon="ic:baseline-edit" color="#0096c7" style="font-size: 24px;" />
+              <Icon icon="ic:baseline-edit" color="#4caf50" style="font-size: 24px;" />
             </span></template></v-tooltip>
         <v-tooltip text="刪除">
           <template v-slot:activator="{ props }">
             <span class=" mr-3" v-bind="props"
-              @click="currencyData = JSON.parse(JSON.stringify(item)); appApiData.updateConfirm(true, comfirmItemRemove, handledelete)">
+              @click="currencyData = JSON.parse(JSON.stringify(item)); appApiData.updateConfirm(true, confirmItemRemove, handledelete)">
               <Icon icon="mdi:garbage" color="red" style="font-size: 24px;" />
             </span></template></v-tooltip>
       </template>
     </v-data-table-server>
   </main>
-  <div style="height: 100px;" v-if="dialogUpdate">
 
-    <v-dialog v-model="dialogUpdate" scrollable fullscreen persistent :overlay="false" max-width="500px"
-      transition="dialog-transition">
-      <v-form ref="form" v-model="formValid">
-
-
-        <v-card>
-          <v-container>
-            <v-card-title>
-              <v-row>
-                <v-col cols="4">
-                  <h4 class="mt-3 mb-3" v-if="currencyData.id">編輯幣別
-                  </h4>
-                  <h4 class="mt-3 mb-3" v-else>新增幣別
-                  </h4>
-                </v-col>
-
-                <v-col cols="8" class="text-right "> <v-btn color="blue-grey-lighten-4" @click="dialogUpdate = false">
-                    <Icon icon="mingcute:close-fill" style="font-size: 16px; " />
-                  </v-btn></v-col>
-              </v-row>
-            </v-card-title>
-            <v-card-text>
-              <v-row class="tableInfo">
-                <v-col cols="4" lg="2" class="text-right bg-thead thead"> <label class="form-label"
-                    style="font-size: 16px;">
-                    代碼
-                  </label></v-col>
-                <v-col lg="4" cols="8">
-                  <v-text-field v-model="currencyData.code" variant="outlined" density="compact" hide-details="auto"
-                    :rules="[...rulesUtil(['requiredRule', 'maxlength20']), checkCodeDuplicated]"></v-text-field>
-                </v-col>
-                <v-col cols="4" lg="2" class="text-right bg-thead thead"> <label class="form-label"
-                    style="font-size: 16px;">
-                    中文名稱
-                  </label></v-col>
-                <v-col lg="4" cols="8">
-                  <v-text-field v-model="currencyData.name" variant="outlined" density="compact" hide-details="auto"
-                    :rules="rulesUtil(['requiredRule', 'maxlength20'])"></v-text-field>
-                </v-col>
-                <v-col cols="4" lg="2" class="text-right bg-thead thead"> <label class="form-label"
-                    style="font-size: 16px;">
-                    符號
-                  </label></v-col>
-                <v-col lg="4" cols="8">
-                  <v-text-field v-model="currencyData.symbol" variant="outlined" density="compact" hide-details="auto"
-                    :rules="rulesUtil(['requiredRule', 'maxlength20'])"></v-text-field>
-                </v-col>
-                <v-col lg="6" cols="8"></v-col>
-                <v-col cols="4" lg="2" class="text-right bg-thead thead"> <label class="form-label"
-                    style="font-size: 16px;">
-                    匯率數值
-                  </label></v-col>
-                <v-col lg="4" cols="8">
-                  <v-text-field v-model="currencyData.rateFloat" variant="outlined" density="compact"
-                    hide-details="auto" type="number"
-                    :rules="rulesUtil(['requiredRuleDecimal', 'maxInt10W'])"></v-text-field>
-                </v-col>
-                <v-col lg="6" cols="8" class="d-flex align-center">{{ formattedRateFloat }}</v-col>
-                <v-col cols="4" lg="2" class="text-right bg-thead thead"> <label class="form-label"
-                    style="font-size: 16px;">
-                    幣別描述
-                  </label></v-col>
-                <v-col lg="10" cols="8">
-                  <v-text-field v-model="currencyData.description" variant="outlined" density="compact"
-                    hide-details="auto" :rules="rulesUtil(['requiredRule', 'maxlength100'])"></v-text-field>
-                </v-col>
-
-              </v-row>
-            </v-card-text><v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="elevated"
-                @click="appApiData.updateConfirm(true, comfirmItemUpdate, handleUpdate)" :disabled="!formValid">
-                儲存
-              </v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="dialogUpdate = false;">
-                取消</v-btn>
-            </v-card-actions></v-container></v-card> </v-form>
-    </v-dialog>
-  </div>
+  <!-- Vuetify 版本 Dialog -->
+  <CoinInputVDialog
+    v-model="dialogUpdate"
+    v-model:currency-data="currencyData"
+    v-model:form-valid="formValid"
+    :rules-util="rulesUtil"
+    :check-code-duplicated="checkCodeDuplicated"
+    @save="handleUpdate"
+    @close="handleDialogClose"
+  />
 </template>

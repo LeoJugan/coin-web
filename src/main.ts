@@ -15,7 +15,7 @@ import { useAppApiDataStore } from '@/stores/app-api-data'
 
 const app = createApp(App)
 //子組件-確認畫面
-import confirmComp from "@/components/common/confirmComp.vue";
+import confirmComp from "@/components/common/confirmComp/confirmComp.vue";
 app.component('confirmComp', confirmComp);
 app.component('Icon', Icon)
 

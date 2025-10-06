@@ -1,0 +1,98 @@
+name: 自動化測試
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+    
+    - name: 設定 Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: 安裝依賴
+      run: npm ci
+    
+    - name: 執行單元測試
+      run: npm run test:unit:coverage
+    
+    - name: 執行整合測試
+      run: npm run test:integration
+    
+    - name: 執行 E2E 測試
+      run: npm run test:e2e
+    
+    - name: 上傳測試覆蓋率報告
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+    
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.x'
+        cache: 'npm'
+    
+    - name: 安裝依賴
+      run: npm ci
+    
+    - name: 執行 ESLint
+      run: npm run lint
+    
+    - name: 執行 Prettier 檢查
+      run: npm run format -- --check
+
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+    
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.x'
+        cache: 'npm'
+    
+    - name: 安裝依賴
+      run: npm ci
+    
+    - name: 執行類型檢查
+      run: npm run type-check
+    
+    - name: 建置專案
+      run: npm run build
+    
+    - name: 上傳建置產物
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+
+
