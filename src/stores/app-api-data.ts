@@ -106,8 +106,7 @@ export const useAppApiDataStore = defineStore({
 
         //get query 路徑、欄位名稱、查詢值，開啟loading、延遲關閉loading
         getByQuery(path: string, key: string, value: string, autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
-            const vm = this;
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             const fullpath = key ? this.apiServerUrl + 'api/' + path + '?' + key + '=' + value : this.apiServerUrl + 'api/' + path;
             return axios
                 .get(
@@ -118,35 +117,31 @@ export const useAppApiDataStore = defineStore({
                             Authorization: this.apiToken
                         }
                     })
-                .then(function (response) {
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(path, key, value, " getByQuery!! ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
                         console.log("autoSaveStatusEnd ", autoSaveStatusEnd);
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
         //get query 路徑key、複數{欄位名稱key,查詢值value}、、開啟loading、延遲關閉loading
         getByQueryMulti(path: string, jsonArray: QueryItem[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
-            const vm = this;
-            // console.log(jsonArray, "jsonArray ", jsonArray.every(item => item.hasOwnProperty('key')));
+            // console.log(jsonArray, "jsonArray ", jsonArray.every(item => Object.prototype.hasOwnProperty.call(item, 'key')));
             // jsonArray.forEach(item => { console.log(item); })
 
-            if (jsonArray.length == 0 && !jsonArray.every(item => item.hasOwnProperty('key') && item.hasOwnProperty('value'))) {
+            if (jsonArray.length == 0 && !jsonArray.every(item => Object.prototype.hasOwnProperty.call(item, 'key') && Object.prototype.hasOwnProperty.call(item, 'value'))) {
                 globalFunctions.handErrorUtil("getByQueryMulti jsonArray", jsonArray);
                 return;
             }
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             const queryString = jsonArray.map(item => `${item.key}=${item.value}`).join('&');
             const fullpath = this.apiServerUrl + 'api/' + path + '?' + queryString;
             return axios
@@ -158,32 +153,28 @@ export const useAppApiDataStore = defineStore({
                             Authorization: this.apiToken
                         }
                     })
-                .then(function (response) {
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(path, jsonArray, " getByQueryMulti ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
         //get path 路徑、欄位名稱、查詢值，開啟loading、延遲關閉loading
         getByPath(path: string, valueArray: string[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
-            const vm = this;
             // if (valueArray.length == 0) {
             //     globalFunctions.handErrorUtil("getByPath valueArray", valueArray);
             //     return;
             // }
             const queryString = valueArray.join('/');
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             const fullpath = this.apiServerUrl + 'api/' + path + '/' + queryString;
             return axios
                 .get(
@@ -194,28 +185,24 @@ export const useAppApiDataStore = defineStore({
                             Authorization: this.apiToken
                         }
                     })
-                .then(function (response) {
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(path, valueArray, " getByPath ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
         //post body 路徑、object，開啟loading跟延遲關閉
         postByBody(path: string, object: any, autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200, responseType?: 'json' | 'text' | 'blob' | 'arraybuffer' | 'document') {
-            const vm = this;
             // console.log("responseType ", responseType);
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             return axios
                 .post(
                     this.apiServerUrl + 'api/' + path, object,
@@ -226,31 +213,25 @@ export const useAppApiDataStore = defineStore({
                         },
                         responseType: responseType ? responseType : 'json',
                     })
-                .then(function (response) {
-
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(path, object, " postByBody ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
         //post query 路徑key、複數{欄位名稱key,查詢值value}、、開啟loading、延遲關閉loading
         //post 同時支援query跟body兩種方式
         //[ {key:'a1',value:'a2'},{key:'b1',value:'b2'},{body:{...}} ]
         postByQueryMulti(path: string, jsonArray: QueryArrayItem[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
-            const vm = this;
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             if (jsonArray.length == 0 && !jsonArray.every(item => 'key' in item && 'value' in item)) {
                 globalFunctions.handErrorUtil("postByQueryMulti jsonArray", jsonArray);
                 return;
@@ -269,27 +250,23 @@ export const useAppApiDataStore = defineStore({
                             Authorization: this.apiToken
                         }
                     })
-                .then(function (response) {
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(fullpath, " postByQueryMulti ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
         //put body 路徑、object，開啟loading跟延遲關閉
         putByBody(path: string, object: any, autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
-            const vm = this;
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             return axios
                 .put(
                     this.apiServerUrl + 'api/' + path, object,
@@ -299,29 +276,25 @@ export const useAppApiDataStore = defineStore({
                             Authorization: this.apiToken
                         }
                     })
-                .then(function (response) {
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(path, object, " putByBody ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
         //put query 路徑key、複數{欄位名稱key,查詢值value}、、開啟loading、延遲關閉loading
         //put 同時支援query跟body兩種方式
         //[ {key:'a1',value:'a2'},{key:'b1',value:'b2'},{body:{...}} ]
         putByQueryMulti(path: string, jsonArray: QueryArrayItem[] = [], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
-            const vm = this;
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             if (jsonArray.length == 0 && !jsonArray.every(item => 'key' in item && 'value' in item)) {
                 globalFunctions.handErrorUtil("putByQueryMulti jsonArray", jsonArray);
                 return;
@@ -340,40 +313,36 @@ export const useAppApiDataStore = defineStore({
                             Authorization: this.apiToken
                         }
                     })
-                .then(function (response) {
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(fullpath, " putByQueryMulti ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
         //put body 路徑、object，開啟loading跟延遲關閉
         //query同時支援query跟body兩種方式 字串 => path/uuid JSON path?key=value
         //[ {key:'a1',value:'a2'},{key:'b1',value:'b2'}]
         deleteByQuery(path: string, query: string | QueryItem | QueryItem[], autoSaveStatusStart: boolean = true, autoSaveStatusEnd: boolean = true, timeout: number = 200) {
-            const vm = this;
             // const fullpath = typeof query === 'string' ? this.apiServerUrl + 'api/' + path + '/' + query : this.apiServerUrl + 'api/' + path + '?' + query.key + '=' + query.value;
             let fullpath = ''
             if (typeof query === 'string')
-                fullpath = vm.apiServerUrl + 'api/' + path + '/' + query;
+                fullpath = this.apiServerUrl + 'api/' + path + '/' + query;
             else if (Array.isArray(query)) {
-                const queryString = query.filter(item => item.hasOwnProperty('key')).map(item => `${item.key}=${item.value}`).join('&');
-                fullpath = vm.apiServerUrl + 'api/' + path + '?' + queryString;
+                const queryString = query.filter(item => Object.prototype.hasOwnProperty.call(item, 'key')).map(item => `${item.key}=${item.value}`).join('&');
+                fullpath = this.apiServerUrl + 'api/' + path + '?' + queryString;
             } else if (typeof query === 'object') {
-                fullpath = vm.apiServerUrl + 'api/' + path + '?' + query.key + '=' + query.value;
+                fullpath = this.apiServerUrl + 'api/' + path + '?' + query.key + '=' + query.value;
             }
 
-            if (autoSaveStatusStart) vm.updateAutoSaveStatus(true);
+            if (autoSaveStatusStart) this.updateAutoSaveStatus(true);
             return axios
                 .delete(
                     fullpath,
@@ -383,21 +352,18 @@ export const useAppApiDataStore = defineStore({
                             Authorization: this.apiToken
                         }
                     })
-                .then(function (response) {
+                .then((response) => {
                     if (process.env.NODE_ENV != 'production')
                         console.log(path, query, " deleteByBody ", response.data);
-                    // vm.infoUserArray = response.data;
                     return response.data
                 })
-                .catch(function (error) {
-
+                .catch((error) => {
                     console.log(error);
                 })
                 .finally(() => {
                     setTimeout(() => {
-                        if (autoSaveStatusEnd) vm.updateAutoSaveStatus(false);
+                        if (autoSaveStatusEnd) this.updateAutoSaveStatus(false);
                     }, timeout);
-
                 })
         },
 

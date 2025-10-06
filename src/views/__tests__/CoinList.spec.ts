@@ -16,8 +16,8 @@ vi.mock('@/stores/app-api-data', () => ({
 
 // Mock moment
 vi.mock('moment', () => ({
-  default: (date: string) => ({
-    format: (format: string) => '2024/01/01 12:00:00'
+  default: (_date: string) => ({
+    format: (_format: string) => '2024/01/01 12:00:00'
   })
 }))
 

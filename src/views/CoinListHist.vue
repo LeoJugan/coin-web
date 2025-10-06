@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue';
-import axios from "axios";
+import { onMounted, ref } from 'vue';
 import { useAppApiDataStore } from '@/stores/app-api-data'
 import moment from 'moment';
 import type { CurrencyHistData } from '@/types/currency';
@@ -8,7 +7,7 @@ const appApiData = useAppApiDataStore()
 
 
 
-const title = ref('Welcome to CoinList');
+// const title = ref('Welcome to CoinList'); // 未使用，已註解
 const items = ref<CurrencyHistData[]>([])
 const headers = [
   { title: '代碼', key: 'code' },
