@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createTestVuetify, createTestRouter, mockCurrencyData, mockConfirmItem } from '../../test-utils'
+import { createTestVuetify, mockCurrencyData } from '../../test-utils'
 import CoinList from '../../views/CoinList.vue'
 // import confirmComp from '../../components/common/confirmComp/confirmComp.vue' // Removed as requested
 
@@ -19,8 +19,8 @@ vi.mock('@/stores/app-api-data', () => ({
 
 // Mock moment
 vi.mock('moment', () => ({
-  default: (date: string) => ({
-    format: (format: string) => '2024/01/01 12:00:00'
+  default: (_date: string) => ({
+    format: (_format: string) => '2024/01/01 12:00:00'
   })
 }))
 

@@ -20,12 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { getCurrentInstance } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const props = defineProps<{
   confirmItem: any,
-  confirmFoo: Function
+  confirmFoo: (...args: any[]) => void
 }>()
 
 const dialogConfirm = ref(true)
