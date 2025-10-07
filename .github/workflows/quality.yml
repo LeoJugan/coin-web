@@ -2,9 +2,9 @@ name: 程式碼品質檢查
 
 on:
   push:
-    branches: [ main, master, develop, test-version ]
+    branches: [ develop ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ develop ]
 
 jobs:
   code-quality:
