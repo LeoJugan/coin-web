@@ -47,10 +47,11 @@ import animationData from '@/assets/loading.json'
 
 <style scoped>
 .main-content {
-  width: 1200px;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding-top: 80px;
-
+  padding: 80px 16px 16px 16px;
+  box-sizing: border-box;
 }
 
 header {
@@ -78,6 +79,8 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 nav a {
@@ -111,6 +114,32 @@ nav a:first-of-type {
   border: 0;
 }
 
+/* 行動裝置樣式 */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 60px 8px 8px 8px;
+  }
+  
+  nav {
+    font-size: 14px;
+    margin-top: 1rem;
+    padding: 0 8px;
+  }
+  
+  nav a {
+    padding: 8px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    border: none;
+  }
+  
+  nav a.router-link-exact-active {
+    background-color: #1976d2;
+    color: white;
+  }
+}
+
 @media (min-width: 1024px) {
   header {
     display: flex;
@@ -132,7 +161,6 @@ nav a:first-of-type {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
     margin-top: 1rem;
   }

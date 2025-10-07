@@ -22,6 +22,10 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    
+    /* 增加超時時間以處理 Mobile Safari 的載入問題 */
+    actionTimeout: 30000,
+    navigationTimeout: 60000,
   },
 
   /* Configure projects for major browsers */
@@ -48,7 +52,16 @@ export default defineConfig({
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: { 
+        ...devices['iPhone 12'],
+        /* 針對 Mobile Safari 的特殊配置 */
+        actionTimeout: 45000,
+        navigationTimeout: 90000,
+        /* 啟用調試模式 */
+        trace: 'on',
+        video: 'on',
+        screenshot: 'on',
+      },
     },
 
     /* Test against branded browsers. */
