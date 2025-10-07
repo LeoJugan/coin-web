@@ -36,13 +36,14 @@ jobs:
         path: dist/
         retention-days: 30
         
-    # 如果您使用 GitHub Pages 部署
+    # 部署到 GitHub Pages
     - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
+        cname: # 如果有自定義域名，在這裡填入
         
     # 如果您使用其他部署平台，可以取消註解並修改
     # - name: Deploy to Vercel
