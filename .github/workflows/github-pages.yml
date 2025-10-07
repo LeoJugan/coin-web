@@ -45,7 +45,7 @@ jobs:
           libgstreamer-plugins-ugly1.0-0 \
           libgtk-3-0 \
           libxss1 \
-          libasound2 \
+          libasound2-dev \
           libcups2 \
           libdrm2 \
           libxrandr2 \
@@ -55,30 +55,18 @@ jobs:
           libxfixes3 \
           libxinerama1 \
           libxext6 \
-          libgl1 \
-          libglu1-mesa \
-          libgles2-mesa \
+          libgl1-mesa-dev \
+          libglu1-mesa-dev \
+          libgles2-mesa-dev \
           libsm6 \
           libice6 \
-          libx264-155 \
-          libx264-160 \
           libx264-dev \
           libnss3 \
           libatk1.0-0 \
           libatk-bridge2.0-0 \
-          libcups2 \
-          libdrm2 \
           libxkbcommon0 \
-          libxcomposite1 \
-          libxrandr2 \
-          libxss1 \
           libxtst6 \
-          libgtk-3-0 \
-          libasound2 \
-          libgbm1 \
-          libxshmfence1 \
-          libglu1-mesa \
-          libgles2-mesa
+          libxshmfence1
       
     - name: Install Playwright dependencies
       run: npx playwright install-deps
