@@ -65,8 +65,6 @@ export default defineConfig({
         launchOptions: {
           slowMo: 100,
         },
-        /* 設置更寬鬆的等待條件 */
-        waitForTimeout: 2000,
       },
     },
 
