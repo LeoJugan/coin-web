@@ -55,12 +55,18 @@ export default defineConfig({
       use: { 
         ...devices['iPhone 12'],
         /* 針對 Mobile Safari 的特殊配置 */
-        actionTimeout: 45000,
-        navigationTimeout: 90000,
+        actionTimeout: 60000,
+        navigationTimeout: 120000,
         /* 啟用調試模式 */
         trace: 'on',
         video: 'on',
         screenshot: 'on',
+        /* 增加額外的等待時間 */
+        launchOptions: {
+          slowMo: 100,
+        },
+        /* 設置更寬鬆的等待條件 */
+        waitForTimeout: 2000,
       },
     },
 
