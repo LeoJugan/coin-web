@@ -1,5 +1,4 @@
 import { createPinia, setActivePinia } from 'pinia'
-import { createApp } from 'vue'
 import { createVuetify } from 'vuetify'
 import { createRouter, createWebHistory } from 'vue-router'
 import { config } from '@vue/test-utils'

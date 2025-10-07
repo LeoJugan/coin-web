@@ -10,7 +10,7 @@ import { Icon } from '@iconify/vue';
 import 'vuetify/styles'
 // import { createVuetify } from 'vuetify'
 import vuetify from './plugins/vuetify'
-import { useAppApiDataStore } from '@/stores/app-api-data'
+// import { useAppApiDataStore } from '@/stores/app-api-data'
 
 
 const app = createApp(App)

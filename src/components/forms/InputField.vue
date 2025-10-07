@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 // Props 定義
 interface Props {
@@ -123,7 +123,7 @@ const emit = defineEmits<{
 }>()
 
 // 計算屬性
-const hasError = computed(() => !!props.errorMessage)
+// const hasError = computed(() => !!props.errorMessage)
 
 // 事件處理
 const handleInput = (value: string | number) => {

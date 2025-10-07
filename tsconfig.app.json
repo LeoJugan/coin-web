@@ -10,7 +10,7 @@
     "outDir": "./dist",
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -32,6 +32,7 @@
     "src/**/*.vue",
     "e2e/**/*.ts",
     "*.ts",
-    "*.d.ts"
+    "*.d.ts",
+    ".eslintrc.cjs"
   ]
 }

@@ -1,0 +1,81 @@
+name: 程式碼品質檢查
+
+on:
+  push:
+    branches: [ main, master, develop, test-version ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  code-quality:
+    name: 程式碼品質檢查
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        
+    - name: 安裝依賴
+      run: npm ci
+      
+    - name: 執行 ESLint
+      run: npm run lint
+      
+    - name: 執行 Prettier 檢查
+      run: npm run format -- --check
+      
+    - name: 執行 TypeScript 類型檢查
+      run: npm run type-check
+      
+    - name: 上傳程式碼品質報告
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: code-quality-report
+        path: |
+          eslint-report.json
+          prettier-report.json
+        retention-days: 30
+
+  dependency-check:
+    name: 依賴項檢查
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        
+    - name: 安裝依賴
+      run: npm ci
+      
+    - name: 檢查過時的依賴項
+      run: npm outdated || true
+      
+    - name: 執行安全審計
+      run: npm audit --audit-level moderate
+      
+    - name: 執行依賴項檢查
+      run: npx audit-ci --config audit-ci.json || true
+      
+    - name: 上傳依賴項檢查報告
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: dependency-check-report
+        path: |
+          npm-audit.json
+          audit-ci-results.json
+        retention-days: 30
+

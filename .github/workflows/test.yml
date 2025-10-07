@@ -33,16 +33,21 @@ jobs:
     - name: 執行整合測試
       run: npm run test:integration
     
+    - name: 安裝 Playwright 瀏覽器
+      run: npx playwright install --with-deps
+      
+    - name: 建置應用程式
+      run: npm run build
+      
     - name: 執行 E2E 測試
       run: npm run test:e2e
     
     - name: 上傳測試覆蓋率報告
-      uses: codecov/codecov-action@v3
+      uses: actions/upload-artifact@v4
       with:
-        file: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
+        name: coverage-report-node-${{ matrix.node-version }}
+        path: coverage/
+        retention-days: 30
 
   lint:
     runs-on: ubuntu-latest

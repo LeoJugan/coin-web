@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue';
-import axios from "axios";
+import { onMounted, ref } from 'vue';
+// import axios from "axios";
 import { useAppApiDataStore } from '@/stores/app-api-data'
 import moment from 'moment';
 import type { CurrencyData } from '@/types/currency';
-import { confirmItemUpdate, confirmItemInit, confirmItemRemove } from '@/config/confirmItems';
+import { confirmItemInit, confirmItemRemove } from '@/config/confirmItems';
 import { CoinInputVDialog } from '@/components/dialogs';
 const appApiData = useAppApiDataStore()
 
@@ -71,15 +71,15 @@ function formatCurrency(num: number | null): string {
   const formatted = fixed.replace(/\B(?=(\d{3})+(?!\d))/g, ',').replace(/(\.\d{3})\d*$/, '$1');
   return formatted;
 }
-const formattedRateFloat = computed(() => formatCurrency(currencyData.value.rateFloat));
+// const formattedRateFloat = computed(() => formatCurrency(currencyData.value.rateFloat));
 
 // 為 InputField 創建計算屬性
-const rateFloatInput = computed({
-  get: () => currencyData.value.rateFloat || '',
-  set: (value: string | number) => {
-    currencyData.value.rateFloat = value ? Number(value) : null;
-  }
-});
+// const rateFloatInput = computed({
+//   get: () => currencyData.value.rateFloat || '',
+//   set: (value: string | number) => {
+//     currencyData.value.rateFloat = value ? Number(value) : null;
+//   }
+// });
 
 
 const getCurrency = async () => {
@@ -93,7 +93,7 @@ const getCurrency = async () => {
 };
 
 const handleInit = async () => {
-  appApiData.getByPath('currenciesInit', [], true, false).then((result) => {
+  appApiData.getByPath('currenciesInit', [], true, false).then(() => {
     getCurrency();
   });
 };
@@ -103,13 +103,13 @@ const handleUpdate = () => {
   currencyData.value.rate = formatCurrency(currencyData.value.rateFloat);
   if (!currencyData.value.id) {
     // 新增
-    appApiData.postByBody('currencies', currencyData.value).then((result) => {
+    appApiData.postByBody('currencies', currencyData.value).then(() => {
       getCurrency();
       dialogUpdate.value = false;
     });
   } else {
     // 修改
-    appApiData.putByBody('currencies', currencyData.value).then((result) => {
+    appApiData.putByBody('currencies', currencyData.value).then(() => {
       getCurrency();
       dialogUpdate.value = false;
     });
@@ -121,7 +121,7 @@ const handleDialogClose = () => {
 }
 
 
-const handledelete = (item: any) => {
+const handledelete = () => {
   // console.log(currencyData.value);
   // axios.delete(`/devTest/api/currencies/${currencyData.value.id}`, {
   //   headers: { "Content-Type": "application/json" }
@@ -132,7 +132,7 @@ const handledelete = (item: any) => {
   //   .catch(error => {
   //     console.error('刪除失敗', error);
   //   });
-  appApiData.deleteByQuery('currencies', currencyData.value.id).then((result) => {
+  appApiData.deleteByQuery('currencies', currencyData.value.id).then(() => {
     getCurrency();
   });
   // appApiData.updateAutoSaveStatus(false);
