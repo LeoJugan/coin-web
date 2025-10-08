@@ -145,11 +145,14 @@ mockConfirmItem
 
 ## 持續整合
 
-### GitHub Actions
+### CI/CD 支援
 
-專案配置了 GitHub Actions 工作流程：
+專案支援多種 CI/CD 平台：
 
-- 自動執行測試
+- 本地 CI/CD 腳本
+- GitLab CI/CD
+- Netlify
+- Vercel
 - 生成測試報告
 - 上傳覆蓋率報告
 - 程式碼品質檢查

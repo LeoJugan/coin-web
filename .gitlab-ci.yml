@@ -1,0 +1,101 @@
+# GitLab CI/CD 配置檔案
+# 適用於 Vue.js 專案的完整 CI/CD 流程
+
+stages:
+  - install
+  - test
+  - build
+  - deploy
+
+# 快取 node_modules 以加速建置
+cache:
+  paths:
+    - node_modules/
+    - .npm/
+
+# 安裝依賴
+install_dependencies:
+  stage: install
+  image: node:20
+  script:
+    - npm ci
+    - npm run prepare
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+
+# 執行單元測試和整合測試
+test_unit:
+  stage: test
+  image: node:20
+  dependencies:
+    - install_dependencies
+  script:
+    - npm run test:unit:coverage
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+
+# 執行 E2E 測試
+test_e2e:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.40.0-focal
+  dependencies:
+    - install_dependencies
+  script:
+    - npm run test:e2e
+  artifacts:
+    when: always
+    paths:
+      - test-results/
+    expire_in: 1 week
+
+# 建置專案
+build:
+  stage: build
+  image: node:20
+  dependencies:
+    - install_dependencies
+  script:
+    - npm run build-with-type-check
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
+
+# 部署到 GitHub Pages (需要設定 GITHUB_TOKEN)
+deploy_github_pages:
+  stage: deploy
+  image: node:20
+  dependencies:
+    - build
+  script:
+    - npm install -g gh-pages
+    - gh-pages -d dist -t true
+  only:
+    - main
+    - master
+  when: manual  # 手動觸發部署
+
+# 部署到 GitLab Pages (自動部署)
+deploy_gitlab_pages:
+  stage: deploy
+  image: node:20
+  dependencies:
+    - build
+  script:
+    - mkdir public
+    - cp -r dist/* public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - master
+

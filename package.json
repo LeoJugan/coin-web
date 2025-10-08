@@ -27,7 +27,11 @@
     "build-with-type-check": "rimraf dist && npm run type-check && vite build",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write .",
-    "prepare": "playwright install"
+    "prepare": "playwright install",
+    "ci:local": "scripts/ci-local.sh",
+    "ci:local:deploy": "scripts/ci-local.sh --deploy",
+    "deploy:github": "scripts/deploy-github-pages.sh",
+    "deploy:github:win": "scripts/deploy-github-pages.bat"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",

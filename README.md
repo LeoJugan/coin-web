@@ -13,7 +13,7 @@
 - **測試框架**: Vitest + Vue Test Utils
 - **E2E 測試**: Playwright
 - **程式碼品質**: ESLint + Prettier
-- **CI/CD**: GitHub Actions
+- **CI/CD**: 本地腳本 + 多平台支援
 
 ## 📋 功能特色
 
@@ -150,9 +150,12 @@ src/
 
 ## 🚀 部署
 
-### GitHub Actions
-專案配置了完整的 CI/CD 流程：
-- 自動測試執行
+### 部署選項
+專案支援多種部署方式：
+- 本地 CI/CD 腳本
+- GitLab CI/CD
+- Netlify
+- Vercel
 - 程式碼品質檢查
 - 建置驗證
 - 測試覆蓋率上傳

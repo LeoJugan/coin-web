@@ -126,7 +126,7 @@ vi.mock('complex-dependency', () => ({
 ### 已建立的測試架構
 1. **完整的測試工具鏈**: Vitest, Vue Test Utils, Playwright
 2. **多層測試架構**: 單元測試、整合測試、E2E 測試
-3. **CI/CD 整合**: GitHub Actions 自動化測試
+3. **CI/CD 整合**: 多平台 CI/CD 支援
 4. **測試文檔**: 完整的測試指南和修復建議
 
 ### 測試執行結果

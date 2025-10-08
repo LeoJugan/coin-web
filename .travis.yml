@@ -1,0 +1,37 @@
+# Travis CI 配置檔案
+# 適用於 Vue.js 專案
+
+language: node_js
+node_js:
+  - 20
+
+# 快取 node_modules
+cache:
+  directories:
+    - node_modules
+
+# 安裝 Playwright 瀏覽器
+before_install:
+  - npx playwright install --with-deps
+
+# 安裝依賴
+install:
+  - npm ci
+
+# 執行測試
+script:
+  - npm run test:ci
+
+# 建置專案
+after_success:
+  - npm run build
+
+# 部署到 GitHub Pages
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: dist
+  on:
+    branch: main
+

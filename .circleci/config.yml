@@ -1,0 +1,73 @@
+# CircleCI 配置檔案
+# 適用於 Vue.js 專案
+
+version: 2.1
+
+orbs:
+  node: circleci/node@5.1.0
+
+jobs:
+  test:
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Install Playwright browsers
+          command: npx playwright install --with-deps
+      - run:
+          name: Run unit tests
+          command: npm run test:unit:coverage
+      - run:
+          name: Run E2E tests
+          command: npm run test:e2e
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+
+  build:
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Build project
+          command: npm run build-with-type-check
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+
+  deploy:
+    docker:
+      - image: cimg/node:20.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy to GitHub Pages
+          command: |
+            npm install -g gh-pages
+            gh-pages -d dist -t true
+
+workflows:
+  test_and_deploy:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
+

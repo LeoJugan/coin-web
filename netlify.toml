@@ -1,0 +1,43 @@
+# Netlify 配置檔案
+# 適用於 Vue.js 專案的自動部署
+
+[build]
+  # 建置命令
+  command = "npm run build"
+  
+  # 發布目錄
+  publish = "dist"
+  
+  # 環境變數
+  [build.environment]
+    NODE_VERSION = "20"
+
+# 重定向規則 (SPA 支援)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# 建置設定
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+# 表單處理
+[build.processing.functions]
+  directory = "netlify/functions"
+
+# 環境變數 (在 Netlify UI 中設定)
+# NODE_ENV = "production"
+# VITE_API_URL = "your-api-url"
+
