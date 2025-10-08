@@ -16,7 +16,7 @@ cache:
 # 安裝依賴
 install_dependencies:
   stage: install
-  image: node:20
+  image: node:20.19.0
   script:
     - npm ci
     - npm run prepare
@@ -28,7 +28,7 @@ install_dependencies:
 # 執行單元測試和整合測試
 test_unit:
   stage: test
-  image: node:20
+  image: node:20.19.0
   dependencies:
     - install_dependencies
   script:
@@ -59,7 +59,7 @@ test_e2e:
 # 建置專案
 build:
   stage: build
-  image: node:20
+  image: node:20.19.0
   dependencies:
     - install_dependencies
   script:
@@ -72,7 +72,7 @@ build:
 # 部署到 GitHub Pages (需要設定 GITHUB_TOKEN)
 deploy_github_pages:
   stage: deploy
-  image: node:20
+  image: node:20.19.0
   dependencies:
     - build
   script:
@@ -86,21 +86,29 @@ deploy_github_pages:
 # 部署到 GitLab Pages (自動部署)
 pages:
   stage: deploy
-  image: node:20
+  image: node:20.19.0
   dependencies:
     - build
   script:
     - echo "開始部署到 GitLab Pages..."
+    - echo "檢查 dist 目錄："
     - ls -la dist/
+    - echo "檢查 dist 目錄內容："
+    - find dist/ -type f -name "*.html" -o -name "*.js" -o -name "*.css" | head -10
+    - echo "建立 public 目錄："
     - mkdir -p public
+    - echo "複製檔案到 public 目錄："
     - cp -r dist/* public/
     - echo "檢查 public 目錄內容："
     - ls -la public/
     - echo "檢查 index.html 是否存在："
-    - ls -la public/index.html || echo "index.html 不存在！"
+    - test -f public/index.html && echo "✅ index.html 存在" || echo "❌ index.html 不存在！"
+    - echo "檢查 public 目錄結構："
+    - find public/ -type f | head -10
   artifacts:
     paths:
       - public
+    expire_in: 1 hour
   only:
     - main
     - master

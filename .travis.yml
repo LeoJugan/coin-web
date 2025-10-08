@@ -3,7 +3,7 @@
 
 language: node_js
 node_js:
-  - 20
+  - 20.19.0
 
 # 快取 node_modules
 cache:
