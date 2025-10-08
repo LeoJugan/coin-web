@@ -16,7 +16,7 @@ cache:
 # 安裝依賴
 install_dependencies:
   stage: install
-  image: node:20.19.0
+  image: node:22.19.0
   script:
     - npm ci
     - npm run prepare
@@ -28,7 +28,7 @@ install_dependencies:
 # 執行單元測試和整合測試
 test_unit:
   stage: test
-  image: node:20.19.0
+  image: node:22.19.0
   dependencies:
     - install_dependencies
   script:
@@ -45,9 +45,11 @@ test_unit:
 # 執行 E2E 測試
 test_e2e:
   stage: test
-  image: mcr.microsoft.com/playwright:v1.40.0-focal
+  image: node:22.19.0
   dependencies:
     - install_dependencies
+  before_script:
+    - npx playwright install --with-deps
   script:
     - npm run test:e2e
   artifacts:
@@ -59,7 +61,7 @@ test_e2e:
 # 建置專案
 build:
   stage: build
-  image: node:20.19.0
+  image: node:22.19.0
   dependencies:
     - install_dependencies
   script:
@@ -72,7 +74,7 @@ build:
 # 部署到 GitHub Pages (需要設定 GITHUB_TOKEN)
 deploy_github_pages:
   stage: deploy
-  image: node:20.19.0
+  image: node:22.19.0
   dependencies:
     - build
   script:
@@ -86,7 +88,7 @@ deploy_github_pages:
 # 部署到 GitLab Pages (自動部署)
 pages:
   stage: deploy
-  image: node:20.19.0
+  image: node:22.19.0
   dependencies:
     - build
   script:
