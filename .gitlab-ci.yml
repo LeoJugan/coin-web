@@ -90,8 +90,14 @@ pages:
   dependencies:
     - build
   script:
-    - mkdir public
+    - echo "開始部署到 GitLab Pages..."
+    - ls -la dist/
+    - mkdir -p public
     - cp -r dist/* public/
+    - echo "檢查 public 目錄內容："
+    - ls -la public/
+    - echo "檢查 index.html 是否存在："
+    - ls -la public/index.html || echo "index.html 不存在！"
   artifacts:
     paths:
       - public

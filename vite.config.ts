@@ -7,7 +7,7 @@ import vuetify from 'vite-plugin-vuetify'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/coin-web/',
+  base: process.env.NODE_ENV === 'production' ? '/coin-web/' : '/',
   plugins: [
     vue(),
     vueDevTools(),
@@ -21,7 +21,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/production": {
-        target: "http://localhost:8080/coindesk-1.0.0/", //本機測試
+        // target: "http://localhost:8080/coindesk-1.0.0/", //本機測試
+        target: "https://nhri.hywebcloud20.com/coindesk-1.0.0/", //本機測試
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/production/, ""),
       },
