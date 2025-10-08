@@ -84,7 +84,7 @@ deploy_github_pages:
   when: manual  # 手動觸發部署
 
 # 部署到 GitLab Pages (自動部署)
-deploy_gitlab_pages:
+pages:
   stage: deploy
   image: node:20
   dependencies:
