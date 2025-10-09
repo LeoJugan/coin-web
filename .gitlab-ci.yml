@@ -66,12 +66,18 @@ build:
     - install_dependencies
   script:
     - export NODE_ENV=production
-    - echo "清除舊的建置檔案..."
+    - echo "=== 驗證環境變數 ==="
+    - echo "NODE_ENV: $NODE_ENV"
+    - echo "Node.js 版本: $(node --version)"
+    - echo "NPM 版本: $(npm --version)"
+    - echo "=== 清除舊的建置檔案 ==="
     - rm -rf dist/
-    - echo "開始建置 production 版本..."
+    - echo "=== 開始建置 production 版本 ==="
     - npm run build-with-type-check
-    - echo "檢查建置結果..."
+    - echo "=== 檢查建置結果 ==="
     - ls -la dist/
+    - echo "=== 驗證建置檔案內容 ==="
+    - find dist/ -name "*.js" -exec head -5 {} \; | grep -i "production\|devTest" || echo "未找到相關字串"
   artifacts:
     paths:
       - dist/
@@ -99,6 +105,8 @@ pages:
     - build
   script:
     - export NODE_ENV=production
+    - echo "=== 部署階段環境驗證 ==="
+    - echo "NODE_ENV: $NODE_ENV"
     - echo "開始部署到 GitLab Pages..."
     - echo "檢查 dist 目錄："
     - ls -la dist/
