@@ -66,7 +66,12 @@ build:
     - install_dependencies
   script:
     - export NODE_ENV=production
+    - echo "清除舊的建置檔案..."
+    - rm -rf dist/
+    - echo "開始建置 production 版本..."
     - npm run build-with-type-check
+    - echo "檢查建置結果..."
+    - ls -la dist/
   artifacts:
     paths:
       - dist/
