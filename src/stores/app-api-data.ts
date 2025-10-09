@@ -41,7 +41,8 @@ export const useAppApiDataStore = defineStore({
     state: () => ({
         apiServerUrl: process.env.NODE_ENV === 'production'
             ? '/production/'
-            : '/devTest/',
+            // : '/devTest/',
+            : '/production/',
         apiToken: null as string | null,
         //confirm
         confirmStatus: false,
