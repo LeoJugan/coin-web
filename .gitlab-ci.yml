@@ -65,6 +65,7 @@ build:
   dependencies:
     - install_dependencies
   script:
+    - export NODE_ENV=production
     - npm run build-with-type-check
   artifacts:
     paths:
@@ -92,6 +93,7 @@ pages:
   dependencies:
     - build
   script:
+    - export NODE_ENV=production
     - echo "開始部署到 GitLab Pages..."
     - echo "檢查 dist 目錄："
     - ls -la dist/
