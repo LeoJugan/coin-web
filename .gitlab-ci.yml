@@ -77,7 +77,7 @@ build:
     - echo "=== 檢查建置結果 ==="
     - ls -la dist/
     - echo "=== 驗證建置檔案內容 ==="
-    - find dist/ -name "*.js" -exec head -5 {} \; | grep -i "production\|devTest" || echo "未找到相關字串"
+    - find dist/ -name "*.js" -exec head -5 {} \;
   artifacts:
     paths:
       - dist/
