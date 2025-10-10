@@ -30,8 +30,9 @@ describe('API Integration Tests', () => {
       // Fetch currency data
       const result = await store.fetchCurrencyData()
 
-      // Verify API call
-      expect(mockedAxios.get).toHaveBeenCalledWith('/devTest/v1/bpi/currentprice.json')
+      // Verify API call - 動態獲取 apiServerUrl
+      const expectedUrl = store.apiServerUrl + 'v1/bpi/currentprice.json'
+      expect(mockedAxios.get).toHaveBeenCalledWith(expectedUrl)
       
       // Verify data structure
       expect(result).toHaveProperty('bpi')
@@ -60,7 +61,7 @@ describe('API Integration Tests', () => {
       const result = await store.getByQuery('users', 'id', '1')
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
-        '/devTest/api/users?id=1',
+        store.apiServerUrl + 'api/users?id=1',
         expect.objectContaining({
           headers: expect.objectContaining({
             'Content-Type': 'application/json'
@@ -82,7 +83,7 @@ describe('API Integration Tests', () => {
       const result = await store.getByQueryMulti('users', queryArray)
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
-        '/devTest/api/users?status=active&type=user',
+        store.apiServerUrl + 'api/users?status=active&type=user',
         expect.any(Object)
       )
       expect(result).toEqual(mockResponse.data)
@@ -95,7 +96,7 @@ describe('API Integration Tests', () => {
       const result = await store.getByPath('users', ['1', 'profile'])
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
-        '/devTest/api/users/1/profile',
+        store.apiServerUrl + 'api/users/1/profile',
         expect.any(Object)
       )
       expect(result).toEqual(mockResponse.data)
@@ -111,7 +112,7 @@ describe('API Integration Tests', () => {
       const result = await store.postByBody('users', postData)
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        '/devTest/api/users',
+        store.apiServerUrl + 'api/users',
         postData,
         expect.objectContaining({
           headers: expect.objectContaining({
@@ -133,7 +134,7 @@ describe('API Integration Tests', () => {
       const result = await store.postByQueryMulti('users', queryArray)
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        '/devTest/api/users?action=update',
+        store.apiServerUrl + 'api/users?action=update',
         { name: 'updated name' },
         expect.any(Object)
       )
