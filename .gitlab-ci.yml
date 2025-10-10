@@ -66,18 +66,11 @@ build:
     - install_dependencies
   script:
     - export NODE_ENV=production
-    - echo "=== 驗證環境變數 ==="
-    - echo "NODE_ENV: $NODE_ENV"
-    - echo "Node.js 版本: $(node --version)"
-    - echo "NPM 版本: $(npm --version)"
-    - echo "=== 清除舊的建置檔案 ==="
+    - echo "開始建置 production 版本"
     - rm -rf dist/
-    - echo "=== 開始建置 production 版本 ==="
     - npm run build-with-type-check
-    - echo "=== 檢查建置結果 ==="
+    - echo "建置完成，檢查結果"
     - ls -la dist/
-    - echo "=== 驗證建置檔案內容 ==="
-    - find dist/ -name "*.js" -exec head -5 {} \;
   artifacts:
     paths:
       - dist/
